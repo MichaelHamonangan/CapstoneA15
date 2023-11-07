@@ -1,0 +1,4 @@
+opencv-python==4.6.0.66
+matplotlib==3.8.0
+numpy==1.26.1
+easyocr==1.7.1
