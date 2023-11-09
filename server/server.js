@@ -36,7 +36,6 @@ const app = express();
 // middleware
 app.use(express.json());
 app.use(cors());
-app.use(router);
 
 app.use(multer({storage:fileStorage, fileFilter:fileFilter}).single('ImagePath'))
 
@@ -62,3 +61,5 @@ mongoose.connect(process.env.MONGODB_URI)
     })
 
 //
+
+export default app;
