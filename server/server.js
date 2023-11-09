@@ -11,7 +11,7 @@ const anprRoutes = require('./routes/anprRoutes')
 const multer = require("multer");
 const fileStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, '../_imagesPlate');
+        cb(null, '_imagesPlate');
     },
     filename: (req, file, cb) =>{
         cb(null, Date.now()+ path.extname(file.originalname))
@@ -62,4 +62,4 @@ mongoose.connect(process.env.MONGODB_URI)
 
 //
 
-export default app;
+module.exports = app;
