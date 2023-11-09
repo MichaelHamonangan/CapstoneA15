@@ -31,7 +31,7 @@ const getViolation = async (req, res) => {
 
 // create a new violation
 const createViolation = async (req, res) => {
-    const {Type, PlateNumber} = req.body
+    const {Type} = req.body
 
     if (!Type) {
         const err = new Error('Please provide Type of Violation');
@@ -48,32 +48,32 @@ const createViolation = async (req, res) => {
 
     const ImagePath = req.file.path;
 
-    // //run python model
-    // const projectRoot = path.join(__dirname, '..');
-    // const filePath = path.join(projectRoot, ImagePath);
-    // const childPython = spawn('python', ['controllers\\pythonModel\\main.py', filePath]);
+    //run python model
+    const projectRoot = path.join(__dirname, '..');
+    const filePath = path.join(projectRoot, ImagePath);
+    const childPython = spawn('python', ['controllers\\pythonModel\\main.py', filePath]);
 
-    // // Get the model output
-    // const tempPromise = new Promise((resolve) => {
-    //   childPython.stdout.on('data', (data) => {
-    //       const temp = `${data}`;
-    //       resolve(temp);
-    //   });
-    // });
+    // Get the model output
+    const tempPromise = new Promise((resolve) => {
+      childPython.stdout.on('data', (data) => {
+          const temp = `${data}`;
+          resolve(temp);
+      });
+    });
     
-    // tempPromise.then(async (temp) => {
-    //   console.log('violation registered by vehicle with plate number :', temp);
+    tempPromise.then(async (temp) => {
+      console.log('violation registered by vehicle with plate number :', temp);
 
-    //   const PlateNumber = temp.slice(0, -2);
+      const PlateNumber = temp.slice(0, -2);
 
       //add doc to database
-    try {
-      const violation = await Violation.create({ImagePath, Type, PlateNumber})
-      res.status(200).json(violation)
-    } catch (error) {
-      res.status(400).json({ error: error.message })
-    }
-    // });
+      try {
+        const violation = await Violation.create({ImagePath, Type, PlateNumber})
+        res.status(200).json(violation)
+      } catch (error) {
+        res.status(400).json({ error: error.message })
+      }
+    });
     
     childPython.stderr.on('data', (data) => {
         console.log(`stderr: ${data}`);
