@@ -67,13 +67,13 @@ const createViolation = async (req, res) => {
     //   const PlateNumber = temp.slice(0, -2);
 
       //add doc to database
-      try {
-        const violation = await Violation.create({ImagePath, Type, PlateNumber})
-        res.status(200).json(violation)
-      } catch (error) {
-        res.status(400).json({ error: error.message })
-      }
-    });
+    try {
+      const violation = await Violation.create({ImagePath, Type, PlateNumber})
+      res.status(200).json(violation)
+    } catch (error) {
+      res.status(400).json({ error: error.message })
+    }
+    // });
     
     childPython.stderr.on('data', (data) => {
         console.log(`stderr: ${data}`);
