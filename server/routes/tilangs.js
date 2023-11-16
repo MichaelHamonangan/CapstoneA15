@@ -15,6 +15,7 @@ const { getStorage, ref ,uploadBytesResumable, getDownloadURL} = require('fireba
 const { signInWithEmailAndPassword, createUserWithEmailAndPassword } = require("firebase/auth");
 const { auth } = require('../utils/firebaseConfig');
 const { routes } = require("../server.js");
+const { spawn } = require('child_process')
 
 //cons express = require('express');
 const router = express.Router();
@@ -84,18 +85,50 @@ async function uploadImage(file, quantity) {
 }
 
 router.post('/creates', upload, async (req, res) => {
-  const { nomorKendaraan, tanggal, lokasi } = req.body;
-  const file = {
-      type: req.file.mimetype,
-      buffer: req.file.buffer
-  }
-  try {
-      const buildImage = await uploadImage(file, 'single'); 
-      const savedTilang = await Tilang.create({nomorKendaraan, tanggal, lokasi, keterangan : buildImage})
-      res.status(200).json(savedTilang)
-  } catch(err) {
-      console.log(err);
-  }
+    const { nomorKendaraan, tanggal, lokasi } = req.body;
+    const file = {
+        type: req.file.mimetype,
+        buffer: req.file.buffer
+    }
+    try {
+        const buildImage = await uploadImage(file, 'single'); 
+
+        const childPython = spawn('python', ['controllers\\pythonModel\\main.py', buildImage]);
+
+        // Get the model output
+        const tempPromise = new Promise((resolve) => {
+            childPython.stdout.on('data', (data) => {
+                const temp = `${data}`;
+                resolve(temp);
+            });
+        });
+        
+        tempPromise.then(async (temp) => {
+        console.log('violation registered by vehicle with plate number :', temp);
+
+        const PlateNumber = temp.slice(0, -2);
+
+        //add doc to database
+        try {
+            const savedTilang = await Tilang.create({nomorKendaraan : PlateNumber , tanggal, lokasi, keterangan : buildImage})
+            res.status(200).json(savedTilang)
+        } catch (error) {
+            res.status(400).json({ error: error.message })
+        }
+        });
+        
+        childPython.stderr.on('data', (data) => {
+            console.log(`stderr: ${data}`);
+        });
+
+        childPython.stderr.on('close', (data) => {
+            console.log(`The violation was successfully registered!`);
+        });
+
+        //   const savedTilang = await Tilang.create({nomorKendaraan, tanggal, lokasi, keterangan : buildImage})
+    } catch(err) {
+        console.log(err);
+    } 
 })
 
 // router.get("/", async (req, res) => {
