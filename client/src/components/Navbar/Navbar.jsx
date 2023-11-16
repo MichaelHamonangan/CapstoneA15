@@ -2,8 +2,21 @@ import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom"; 
 
-const NavBar=()=> {
+export default function NavBar() {
   const [navbar, setNavbar] = useState(false);
+  const navigate = useNavigate();
+  const token = localStorage.getItem("accessToken");
+  // if(!token){
+  //   button =
+  // }
+  const handleLogOut = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("userStatus");
+    localStorage.removeItem("userID");
+    
+      navigate("/")
+    
+  }
 
   return (
     <nav className="w-full bg-red-nav shadow">
@@ -66,38 +79,76 @@ const NavBar=()=> {
                 </li>
                 <li className="text-white hover:text-indigo-200 font-Inter font-bold">
                   <Link to="/tatacara">TATA CARA PEMBAYARAN</Link>
-                  
+                </li>
+                <li className="text-white hover:text-indigo-200 font-Inter font-bold">
+                  <Link to="/admin/tilang">DASHBOARD ADMIN</Link>
                 </li>
               </ul>
+
               
               <div className="mt-3 space-y-2 lg:hidden md:inline-block">
+                {token ? (
+                  <>
+                    <button 
+                    onClick={handleLogOut}
+                    className="inline-block w-full px-4 py-2 text-center text-gray-800 bg-white rounded-md shadow hover:bg-gray-100">
+                      Log Out
+                    </button>
+                  </>
+                ) : (
                   <>
                     <a
-                      href="https://wa.me/085804817374" 
-                      className="inline-block w-full px-4 py-2 text-center text-white bg-yellow-500 rounded-md shadow hover:bg-gray-800"
+                      href="/auth/login"
+                      className="inline-block w-full px-4 py-2 text-center text-white bg-yellow-600 rounded-md shadow hover:bg-yellow-400"
                     >
-                      Call Center Pengaduan
+                      Log In
+                    </a>
+                    <a
+                      href="/auth/signup"
+                      className="inline-block w-full px-4 py-2 text-center text-gray-800 bg-white rounded-md shadow hover:bg-gray-100"
+                    >
+                      Sign Up
                     </a>
                   </>
-
+                )}
               </div>
+
+
             </div>
           </div>
+          
+          
           <div className="hidden space-x-2 md:inline-block">
+            {token ? (
+              <button
+                onClick={handleLogOut}
+                className="px-6 py-2 text-white bg-yellow-600 rounded-md shadow hover:bg-yellow-400"
+              >
+                Log Out
+              </button>
+            ) : (
               <>
                 <a
-                  href="https://wa.me/085804817374" 
-                  className="px-6 py-2 text-white bg-yellow-500 rounded-md shadow hover:bg-blue-600"
+                  href="/auth/login"
+                  className="px-6 py-2 text-white bg-yellow-600 rounded-md shadow hover:bg-yellow-400"
                 >
-                  Call Center Pengaduan
+                  Log In
                 </a>
-
+                <a
+                  href="/auth/signup"
+                  className="px-4 py-2 text-gray-800 bg-white rounded-md shadow hover:bg-gray-100"
+                >
+                  Sign Up
+                </a>
               </>
-            </div>
+            )}
+          </div>
+          
+
+
         </div>
       </div>
     </nav>
   );
 }
 
-export default NavBar;

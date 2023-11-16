@@ -7,7 +7,7 @@ export default function TxtInputLg(props) {
         type={props.type}
         name={props.name}
         className={
-          "lg:w-3/4 rounded-lg w-full border-2 border-red-dark " +
+          "lg:w-3/4 rounded-lg w-full border-2 border-red-900 " +
           props.className
         }
         placeholder={props.placeholder}

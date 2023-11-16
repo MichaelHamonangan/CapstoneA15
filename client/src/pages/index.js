@@ -9,7 +9,7 @@ import SidePageTataCara from "../components/SidePage/SidePageTataCara"
 const Home = () => {
   return (
     <>
-    <div className="bgdefault">
+    <div className="bgdefault min-h-screen">
       <Navbar />
       {/* <About className="flex flex-col items-center justify-center w-full" /> */}
       <div className="text-center text-white w-full">
@@ -30,7 +30,7 @@ const Home = () => {
           {/* end - right div -> untuk desc */}
         </div>
         
-      <div className="text-center text-white w-full h-[910px]">
+      <div className="text-center text-white w-full h-full">
         <div id="#about">
           <About />
         </div>
